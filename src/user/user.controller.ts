@@ -12,13 +12,17 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BusinessException } from '../common/common/exceptions/business.exception';
+import { ConfigService } from '@nestjs/config';
 
 @Controller({
   path: 'user',
   version: '1',
 })
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -36,6 +40,12 @@ export class UserController {
       throw new BusinessException('你这个参数错了');
     }
     return this.userService.findAll();
+  }
+
+  @Get('getTestName')
+  @Version('1')
+  getTestName() {
+    return this.configService.get('TEST_VALUE').name;
   }
 
   @Get(':id')
